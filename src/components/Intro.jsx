@@ -1,17 +1,23 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importing useNavigate hook
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { Form } from "react-router-dom";
 import illustration from "../assets/illustration.jpg";
+import { toast } from "react-toastify";
+
 
 const Intro = () => {
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate(); 
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
     console.log(data);
-    // Your registration/login logic here
+   
+    toast.success("You've Logged In To Your Account Successfully");
+    navigate('/dashboard ', { state: { isLogin: true } });
   };
 
   const toggleForm = () => {

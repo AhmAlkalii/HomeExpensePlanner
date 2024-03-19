@@ -7,9 +7,10 @@ import "react-toastify/dist/ReactToastify.css";
 // Layouts
 import Main from "./layout/Main";
 
-
 // Routes
 import Intro from "./components/Intro";
+import Error from "./pages/Error";
+import Dashboard, { dashboardAction } from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,12 @@ const router = createBrowserRouter([
         element: <Intro />,
         errorElement: <Error />,
       },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+        action: dashboardAction,
+        errorElement: <Error />,
+      }
     ],
   },
 ]);
