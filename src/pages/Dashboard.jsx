@@ -50,7 +50,7 @@ export async function dashboardAction({request}){
 function Dashboard() {
 
   const location = useLocation();
-  const { isLogin } = location.state;
+  // const { isLogin } = location.state;
 
   return (
     <>
