@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import AddBudgetForm from '../components/AddBudgetForm';
 import { useLocation } from 'react-router-dom';
 import AddExpenseForm from '../components/AddExpenseForm';
+import BudgetItem from '../components/BudgetItem';
 
 
 
@@ -86,6 +87,14 @@ function Dashboard() {
             <div className="flex-lg">
               <AddBudgetForm />
               <AddExpenseForm budgets={budgets} /> {/* Pass budgets as prop to AddExpenseForm */}
+            </div>
+            <h2>Existing Budgets</h2>
+            <div className="budgets">
+              {
+                budgets.map((budget) => (
+                  <BudgetItem key={budget.id} budget={budget} />
+                ))
+              }
             </div>
           </div>
         ) : (
