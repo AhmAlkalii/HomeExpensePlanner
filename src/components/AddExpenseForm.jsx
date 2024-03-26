@@ -1,28 +1,43 @@
-// react imports
-import { useEffect, useRef } from "react"
-
-// rrd imports
-import { useFetcher } from "react-router-dom"
-
-// library imports
-import { PlusCircleIcon } from "@heroicons/react/24/solid"
+import { useEffect, useRef } from "react";
+import { toast } from "react-toastify";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
 
 const AddExpenseForm = ({ budgets }) => {
-  const fetcher = useFetcher()
-  const isSubmitting = fetcher.state === "submitting";
+  const formRef = useRef();
+  const focusRef = useRef();
 
-  const formRef = useRef()
-  const focusRef = useRef()
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  useEffect(() => {
-    if (!isSubmitting) {
-      // clear form
-      formRef.current.reset()
-      // reset focus
-      focusRef.current.focus()
+    const formData = new FormData(formRef.current);
+    const jsonData = Object.fromEntries(formData.entries());
+    console.log(Object.fromEntries(formData));
+
+
+    try {
+      const response = await fetch('http://localhost:3000/expenses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create expense');
+      }
+
+      const responseData = await response.json();
+      toast.success(responseData.message);
+
+      // Clear the form after successful submission
+      formRef.current.reset();
+      focusRef.current.focus();
+    } catch (error) {
+      console.error('Error creating expense:', error);
+      toast.error('Failed to create expense');
     }
-
-  }, [isSubmitting])
+  };
 
   return (
     <div className="form-wrapper">
@@ -31,11 +46,7 @@ const AddExpenseForm = ({ budgets }) => {
       </span>{" "}
         Expense
       </h2>
-      <fetcher.Form
-        method="post"
-        className="grid-sm"
-        ref={formRef}
-      >
+      <form method="post" className="grid-sm" ref={formRef} onSubmit={handleSubmit}>
         <div className="expense-inputs">
           <div className="grid-xs">
             <label htmlFor="newExpense">Expense Name</label>
@@ -63,7 +74,7 @@ const AddExpenseForm = ({ budgets }) => {
         </div>
         <div className="grid-xs" hidden={budgets.length === 1}>
           <label htmlFor="newExpenseBudget">Budget Category</label>
-          <select name="newExpenseBudget" id="newExpenseBudget" required>
+          <select name="budgetId" id="newExpenseBudget" required>
             {
               budgets
                 .sort((a, b) => a.createdAt - b.createdAt)
@@ -78,18 +89,13 @@ const AddExpenseForm = ({ budgets }) => {
           </select>
         </div>
         <input type="hidden" name="_action" value="createExpense" />
-        <button type="submit" className="btn btn--dark" disabled={isSubmitting}>
-          {
-            isSubmitting ? <span>Submitting…</span> : (
-              <>
-                <span>Add Expense</span>
-                <PlusCircleIcon width={20} />
-              </>
-            )
-          }
+        <button type="submit" className="btn btn--dark">
+          <span>Add Expense</span>
+          <PlusCircleIcon width={20} />
         </button>
-      </fetcher.Form>
+      </form>
     </div>
   )
 }
-export default AddExpenseForm
+
+export default AddExpenseForm;

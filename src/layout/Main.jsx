@@ -7,7 +7,7 @@ import Nav from "../components/Nav";
 //assests
 import wave from '../assets/wave.svg';
 
-const Main = () => {
+const Main = () => { 
   return (
     <div className="layout">
       <Nav/>

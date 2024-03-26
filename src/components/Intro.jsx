@@ -32,7 +32,6 @@ const Intro = () => {
       // Handle successful login or registration
       toast.success(responseData.message);
       navigate('/dashboard');
-      // , { state: { isLogin: true } }
     } catch (error) {
       // Handle error
       console.error('Error:', error);
