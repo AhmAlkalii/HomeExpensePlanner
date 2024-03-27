@@ -1,61 +1,32 @@
-// rrd imports
-import { Form, Link } from "react-router-dom";
-
-// library imports
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BanknotesIcon, TrashIcon } from "@heroicons/react/24/outline";
-
-// helper functions
-import {
-  formatCurrency,
-  formatPercentage,
-} from "../helpers";
-import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { formatCurrency, formatPercentage } from "../helpers";
 
 const BudgetItem = ({ budget, showDelete = false }) => {
-  
   const { id, name, amount, color } = budget;
-  const [expenses, setExpenses] = useState([]);
-  const [expensesExist, setExpensesExist] = useState(false);
+  const [spent, setSpent] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch expenses from your backend when the component mounts
-    fetchExpense();
+    fetchSpent();
   }, []);
 
-  const fetchExpense = async () => {
+  const fetchSpent = async () => {
     try {
-      const response = await fetch('http://localhost:3000/expenses');
+      const response = await fetch(`http://localhost:3000/budgets/${id}/spent`);
       if (!response.ok) {
-        throw new Error('Failed to fetch expenses');
+        throw new Error('Failed to fetch spent amount');
       }
       const data = await response.json();
-      setExpenses(data); 
-      setExpensesExist(data.Length > 0);
+      setSpent(data.spent);
     } catch (error) {
-      console.error('Error fetching expenses:', error);
-      toast.error('Failed to fetch expenses');
+      console.error('Error fetching spent amount:', error);
+      toast.error('Failed to fetch spent amount');
     }
   };
 
-
-  const calculateSpentByBudget = (budgetId) => {
-    const budgetSpent = expenses.reduce((acc, expense) => {
-      if (expense.budgetId !== budgetId) return acc;
-  
-      const amount = parseFloat(expense.amount);
-      if (!isNaN(amount)) {
-        acc += amount;
-      }
-  
-      return acc;
-    }, 0);
-  
-    return budgetSpent;
-  };
-  
-  
-  const spent = calculateSpentByBudget(id);
-console.log(color)
   return (
     <div
       className="budget"
@@ -76,34 +47,36 @@ console.log(color)
       </div>
       {showDelete ? (
         <div className="flex-sm">
-          <Form
-            method="post"
-            action="delete"
-            onSubmit={(event) => {
+          <button
+            className="btn"
+            onClick={() => {
               if (
-                !confirm(
+                !window.confirm(
                   "Are you sure you want to permanently delete this budget?"
                 )
               ) {
-                event.preventDefault();
+                return;
               }
+              // Handle delete action here
             }}
           >
-            <button type="submit" className="btn">
-              <span>Delete Budget</span>
-              <TrashIcon width={20} />
-            </button>
-          </Form>
+            <span>Delete Budget</span>
+            <TrashIcon width={20} />
+          </button>
         </div>
       ) : (
         <div className="flex-sm">
-          <Link to={`/budget/${id}`} className="btn">
+          <button
+            className="btn"
+            onClick={() => navigate(`/budget/${id}`)}
+          >
             <span>View Details</span>
             <BanknotesIcon width={20} />
-          </Link>
+          </button>
         </div>
       )}
     </div>
   );
 };
+
 export default BudgetItem;
