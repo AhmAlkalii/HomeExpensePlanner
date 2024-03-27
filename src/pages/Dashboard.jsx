@@ -86,7 +86,7 @@ function Dashboard() {
           <div className="grid-lg">
             <div className="flex-lg">
               <AddBudgetForm />
-              <AddExpenseForm budgets={budgets} /> {/* Pass budgets as prop to AddExpenseForm */}
+              <AddExpenseForm budgets={budgets} />
             </div>
             <h2>Existing Budgets</h2>
             <div className="budgets">
