@@ -37,6 +37,7 @@ const AddBudgetForm = () => {
       setIsSubmitting(false);
       formRef.current.reset();
       focusRef.current.focus();
+
     } catch (error) {
       console.error('Error creating budget:', error);
       setIsSubmitting(false);

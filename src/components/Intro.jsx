@@ -6,12 +6,16 @@ import { toast } from "react-toastify";
 
 const Intro = () => {
   const [isLogin, setIsLogin] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: ""
+  });
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const data = { ...formData };
 
     // Send HTTP request to backend
     try {
@@ -31,7 +35,20 @@ const Intro = () => {
 
       // Handle successful login or registration
       toast.success(responseData.message);
-      navigate('/dashboard');
+      
+      // If it's a login, navigate to the dashboard page
+      if (isLogin) {
+        navigate('/dashboard');
+      } else {
+        // If it's a registration, switch to login form and clear form data
+        setIsLogin(true);
+        setFormData({
+          username: "",
+          email: "",
+          password: ""
+        });
+        toast.info("You have successfully registered. Please login.");
+      }
     } catch (error) {
       // Handle error
       console.error('Error:', error);
@@ -39,8 +56,22 @@ const Intro = () => {
     }
   };
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
   const toggleForm = () => {
     setIsLogin((prevState) => !prevState);
+    // Clear form data when switching between registration and login forms
+    setFormData({
+      username: "",
+      email: "",
+      password: ""
+    });
   };
 
   return (
@@ -60,6 +91,8 @@ const Intro = () => {
                 placeholder="Your Email"
                 aria-label="Your Email"
                 autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
               />
               <input
                 type="password"
@@ -68,8 +101,9 @@ const Intro = () => {
                 placeholder="Your Password"
                 aria-label="Your Password"
                 autoComplete="current-password"
+                value={formData.password}
+                onChange={handleChange}
               />
-              <input type="hidden" name="_action" value="login" />
             </>
           ) : (
             <>
@@ -80,6 +114,8 @@ const Intro = () => {
                 placeholder="What is your name?"
                 aria-label="Your Name"
                 autoComplete="given-name"
+                value={formData.username}
+                onChange={handleChange}
               />
               <input
                 type="email"
@@ -88,6 +124,8 @@ const Intro = () => {
                 placeholder="Your Email"
                 aria-label="Your Email"
                 autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
               />
               <input
                 type="password"
@@ -96,10 +134,12 @@ const Intro = () => {
                 placeholder="Your Password"
                 aria-label="Your Password"
                 autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
               />
-              <input type="hidden" name="_action" value="register" />
             </>
           )}
+          <input type="hidden" name="_action" value={isLogin ? "login" : "register"} />
           <button type="submit" className="btn btn--dark">
             <span>{isLogin ? "Login" : "Create Account"}</span>
             <UserPlusIcon width={20} />
@@ -115,4 +155,3 @@ const Intro = () => {
 };
 
 export default Intro;
-

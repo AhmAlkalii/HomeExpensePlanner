@@ -1,16 +1,33 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom'; 
 import { toast } from "react-toastify";
-import { TrashIcon, ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
+import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import logomark from '../assets/logomark.svg';
 
 const Nav = () => {
   const navigate = useNavigate(); 
 
-  const handleLogout = (event) => {
+  const handleLogout = async (event) => {
     event.preventDefault();
-    toast("You've Logged Out Of Your Account Successfully");
-    navigate("/");
+    try {
+      const response = await fetch('http://localhost:3000/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const responseData = await response.json();
+        toast.success(responseData.message);
+        navigate("/");
+      } else {
+        throw new Error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error("Failed to logout. Please try again later.");
+    }
   };
 
   return (

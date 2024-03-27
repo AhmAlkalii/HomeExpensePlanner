@@ -42,7 +42,6 @@ const BudgetItem = ({ budget, showDelete = false }) => {
     const budgetSpent = expenses.reduce((acc, expense) => {
       if (expense.budgetId !== budgetId) return acc;
   
-      // Check if expense.amount is a valid number
       const amount = parseFloat(expense.amount);
       if (!isNaN(amount)) {
         acc += amount;
@@ -56,12 +55,12 @@ const BudgetItem = ({ budget, showDelete = false }) => {
   
   
   const spent = calculateSpentByBudget(id);
-
+console.log(color)
   return (
     <div
       className="budget"
       style={{
-        "--accent": color,
+        '--accent': color,
       }}
     >
       <div className="progress-text">
