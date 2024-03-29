@@ -3,65 +3,44 @@ import React, { useEffect, useState } from 'react'
 //tract-router-dom imports
 import { Link } from 'react-router-dom';
 //components
-import Intro from '../components/Intro';
 import { toast } from 'react-toastify';
 import AddBudgetForm from '../components/AddBudgetForm';
-import { useLocation } from 'react-router-dom';
 import AddExpenseForm from '../components/AddExpenseForm';
 import BudgetItem from '../components/BudgetItem';
+import Table from '../components/Table';
 
-
-
-
-// //action
-// export async function dashboardAction({request}){
-//   const data = await request.formData();
-//   const {_action, ...values} = Object.fromEntries(data)
- 
-
-//   if(_action === 'login')
-//   {
-//     try{
-//       return toast.success(`Welcome `)
-//     } catch(e){
-//       throw new Error("There was a problem creating your account.")
-//     }
-//   }
-
-//   if(_action === 'register')
-//   {
-//     try{
-//       return toast.success(`Welcome `)
-//     } catch(e){
-//       throw new Error("There was a problem creating your account.")
-//     }
-//   }
-
-//   if (_action === 'createBudget') {
-//     try {
-//       // await createBudget({
-//       //   name: values.newBudget,
-//       //   amount: values.newBudgetAmount,
-//       // });
-  
-//       toast.success('Budget Created!');
-//     } catch (e) {
-//       throw new Error("There was a problem creating your budget.");
-//     }
-//   }  
-
-// }
 
 function Dashboard() {
 
-  const location = useLocation();
   const [budgetsExist, setBudgetsExist] = useState(false);
+  const [expensesExist, setExpensesExist] = useState(false);
+  
   const [budgets, setBudgets] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+ 
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
+    fetchUserName();
     // Fetch budgets from your backend when the component mounts
     fetchBudgets();
+    fetchExpense();
   }, []);
+
+
+  const fetchUserName = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/user/name');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user name');
+      }
+      const data = await response.json();
+      setUserName(data.userName);
+    } catch (error) {
+      console.error('Error fetching user name:', error);
+      toast.error('Failed to fetch user name');
+    }
+  };
 
   const fetchBudgets = async () => {
     try {
@@ -78,11 +57,26 @@ function Dashboard() {
     }
   };
 
+  const fetchExpense = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/expenses');
+      if (!response.ok) {
+        throw new Error('Failed to fetch expenses');
+      }
+      const data = await response.json();
+      setExpenses(data); 
+      setExpensesExist(data.length > 0); 
+    } catch (error) {
+      console.error('Error fetching expense:', error);
+      toast.error('Failed to fetch expense');
+    }
+  };
 
   return (
     <>
       <div className="dashboard">
-        {budgetsExist ? ( // Render appropriate content based on budgetsExist
+      <h1>Welcome back, <span className='accent'>{userName}</span></h1>
+        {budgetsExist ? ( 
           <div className="grid-lg">
             <div className="flex-lg">
               <AddBudgetForm />
@@ -96,6 +90,22 @@ function Dashboard() {
                 ))
               }
             </div>
+            {
+              expenses && expensesExist && (
+                <div className="grid-md">
+                  <h2>Recent Expenses</h2>
+                  <Table expenses={expenses.sort((a,b) => b.createdAt - a.createdAt)
+                  .slice(0,8)} budgets={budgets}/> 
+                  {expenses.length > 8 && (
+                    <Link to="expenses"
+                      className='btn btn--dark'
+                    >
+                      View all expenses
+                    </Link>
+                  )}
+                </div>
+              )
+            }
           </div>
         ) : (
           <div className="grid-sm">

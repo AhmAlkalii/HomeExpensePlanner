@@ -11,6 +11,7 @@ import Main from "./layout/Main";
 import Intro from "./components/Intro";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
+import ExpensesPage from "./pages/ExpensesPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,11 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />,
+        errorElement: <Error />,
+      },
+      {
+        path: "dashboard/expenses",
+        element: <ExpensesPage />,
         errorElement: <Error />,
       }
     ],
