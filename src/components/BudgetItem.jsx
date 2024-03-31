@@ -27,6 +27,24 @@ const BudgetItem = ({ budget, showDelete = false }) => {
     }
   };
 
+  const handleDeleteBudget = async () => {
+    try {
+        const response = await fetch(`http://localhost:3000/budgets/${id}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete budget');
+        }
+        toast.success('Budget deleted successfully');
+
+        navigate('/dashboard');
+    } catch (error) {
+        console.error('Error deleting budget:', error);
+        toast.error('Failed to delete budget');
+    }
+  };
+
+
   return (
     <div
       className="budget"
@@ -50,15 +68,10 @@ const BudgetItem = ({ budget, showDelete = false }) => {
           <button
             className="btn"
             onClick={() => {
-              if (
-                !window.confirm(
-                  "Are you sure you want to permanently delete this budget?"
-                )
-              ) {
-                return;
+              if (window.confirm("Are you sure you want to permanently delete this budget?")) {
+                  handleDeleteBudget();
               }
-              // Handle delete action here
-            }}
+          }}
           >
             <span>Delete Budget</span>
             <TrashIcon width={20} />
@@ -68,7 +81,12 @@ const BudgetItem = ({ budget, showDelete = false }) => {
         <div className="flex-sm">
           <button
             className="btn"
-            onClick={() => navigate(`/budget/${id}`)}
+            onClick={() => navigate(`/budget/${budget.id}`, {
+              state: {
+                budget: budget,
+              }
+            })}
+            
           >
             <span>View Details</span>
             <BanknotesIcon width={20} />

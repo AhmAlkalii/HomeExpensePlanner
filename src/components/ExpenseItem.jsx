@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 
-const ExpenseItem = ({ expense, budgets }) => {
+const ExpenseItem = ({ expense, budgets, showBudget }) => {
   const budget = budgets.find(b => b.id === expense.budgetId);
 
   const handleDeleteExpense = async () => {
@@ -30,16 +30,22 @@ const ExpenseItem = ({ expense, budgets }) => {
       <td>{expense.newExpense}</td>
       <td>{formatCurrency(expense.newExpenseAmount)}</td>
       <td>{formatDateToLocaleString(expense.createdAt)}</td>
-      <td>
-        <Link
-            to={`/budget/${budget.id}`}
-            style={{
-              "--accent": budget.color,
-            }}
-        >
-            {budget.name}
-        </Link>
-      </td>
+      { showBudget && (
+        <td>
+          <Link
+              to={`/budget/${budget.id}`}
+              state={{
+                budget: budget,
+                expense: expense
+              }}
+              style={{
+                "--accent": budget.color,
+              }}
+          >
+              {budget.name}
+          </Link>
+        </td>
+      )}
       <td>
         <button
           type="submit"

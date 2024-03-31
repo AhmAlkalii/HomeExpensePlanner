@@ -97,7 +97,7 @@ function Dashboard() {
                   <Table expenses={expenses.sort((a,b) => b.createdAt - a.createdAt)
                   .slice(0,8)} budgets={budgets}/> 
                   {expenses.length > 8 && (
-                    <Link to="expenses"
+                    <Link to="/expenses"
                       className='btn btn--dark'
                     >
                       View all expenses

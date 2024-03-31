@@ -12,6 +12,11 @@ import Intro from "./components/Intro";
 import Error from "./pages/Error";
 import Dashboard from "./pages/Dashboard";
 import ExpensesPage from "./pages/ExpensesPage";
+import BudgetPage from "./pages/BudgetPage";
+
+
+
+
 
 const router = createBrowserRouter([
   {
@@ -30,7 +35,12 @@ const router = createBrowserRouter([
         errorElement: <Error />,
       },
       {
-        path: "dashboard/expenses",
+        path: "budget/:id",
+        element: <BudgetPage />,
+        errorElement: <Error />,
+      },
+      {
+        path: "expenses",
         element: <ExpensesPage />,
         errorElement: <Error />,
       }
